@@ -110,7 +110,11 @@ const VideoScreen = () => {
 
   return (
     <>
-      <div {...handlers} className="w-full h-screen relative">
+      <div
+        {...handlers}
+        className="relative"
+        style={{ width: "100vw", height: "100vh" }}
+      >
         {/* Progressbar */}
         <div className="absolute top-0 left-0 w-full h-2 bg-gray-200">
           <div
