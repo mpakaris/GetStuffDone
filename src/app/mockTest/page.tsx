@@ -4,9 +4,11 @@ import {
   FaArrowLeft,
   FaComment,
   FaHeart,
+  FaHome,
   FaInfoCircle,
   FaSearch,
   FaShare,
+  FaUser,
 } from "react-icons/fa";
 import { useSwipeable } from "react-swipeable";
 import { positions } from "./positions";
@@ -113,7 +115,7 @@ const VideoScreen = () => {
       <div
         {...handlers}
         className="relative"
-        style={{ width: "100vw", height: "100vh" }}
+        style={{ width: "100vw", height: "85vh" }}
       >
         {/* Progressbar */}
         <div className="absolute top-0 left-0 w-full h-2 bg-gray-200">
@@ -213,6 +215,29 @@ const VideoScreen = () => {
           >
             APPLY
           </button>
+        </div>
+
+        {/* Footer Screen */}
+        <div className="absolute bottom-0 w-full p-4 bg-black bg-opacity-50 text-white">
+          <p className="text-xl mb-2">{currentPosition.position}</p>
+          <p className="mb-2">@{currentPosition.company}</p>
+          {currentPosition.hashtags && (
+            <p className="mb-5 text-pink-300 font-bold">
+              {currentPosition.hashtags.join(" ")}
+            </p>
+          )}
+          <button
+            onClick={toggleInfoModal}
+            className="bg-pink-500 hover:bg-black text-white font-bold py-2 px-4 rounded ml-auto"
+          >
+            APPLY
+          </button>
+        </div>
+        {/* Footer Screen */}
+        <div className="flex items-center justify-center bottom-0 w-full p-4 bg-black bg-opacity-50 text-white">
+          <FaHome className="text-white text-3xl" />
+          <FaSearch className="text-white text-3xl mx-20" />
+          <FaUser className="text-white text-3xl" />
         </div>
       </div>
     </>
