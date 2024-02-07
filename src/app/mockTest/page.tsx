@@ -32,8 +32,14 @@ const VideoScreen = () => {
     if (videoRef.current) {
       const currentTime = videoRef.current.currentTime;
       const duration = videoRef.current.duration;
-      const progressPercent = (currentTime / duration) * 100;
-      setProgress(progressPercent);
+      if (
+        currentTime !== undefined &&
+        duration !== undefined &&
+        duration !== 0
+      ) {
+        const progressPercent = (currentTime / duration) * 100;
+        setProgress(progressPercent);
+      }
     }
   };
 
