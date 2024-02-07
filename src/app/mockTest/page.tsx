@@ -27,11 +27,10 @@ const VideoScreen = () => {
   const getCurrentVideoPath = () => currentPosition.videos[currentVideoIndex];
 
   const videoRef = useRef<HTMLVideoElement>(null);
-
   const handleTimeUpdate = () => {
     if (videoRef.current) {
-      const currentTime = videoRef.current.currentTime;
-      const duration = videoRef.current.duration;
+      const currentTime = (videoRef.current as HTMLVideoElement).currentTime;
+      const duration = (videoRef.current as HTMLVideoElement).duration;
       if (
         currentTime !== undefined &&
         duration !== undefined &&
@@ -45,10 +44,10 @@ const VideoScreen = () => {
 
   const togglePlayPause = () => {
     if (videoRef.current) {
-      if (videoRef.current.paused) {
-        videoRef.current.play();
+      if ((videoRef.current as HTMLVideoElement).paused) {
+        (videoRef.current as HTMLVideoElement).play();
       } else {
-        videoRef.current.pause();
+        (videoRef.current as HTMLVideoElement).pause();
       }
     }
   };
