@@ -26,7 +26,7 @@ const VideoScreen = () => {
 
   const getCurrentVideoPath = () => currentPosition.videos[currentVideoIndex];
 
-  const videoRef = useRef(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
