@@ -29,17 +29,21 @@ const VideoScreen = () => {
   const videoRef = useRef(null);
 
   const handleTimeUpdate = () => {
-    const currentTime = videoRef.current.currentTime;
-    const duration = videoRef.current.duration;
-    const progressPercent = (currentTime / duration) * 100;
-    setProgress(progressPercent);
+    if (videoRef.current) {
+      const currentTime = videoRef.current.currentTime;
+      const duration = videoRef.current.duration;
+      const progressPercent = (currentTime / duration) * 100;
+      setProgress(progressPercent);
+    }
   };
 
   const togglePlayPause = () => {
-    if (videoRef.current.paused) {
-      videoRef.current.play();
-    } else {
-      videoRef.current.pause();
+    if (videoRef.current) {
+      if (videoRef.current.paused) {
+        videoRef.current.play();
+      } else {
+        videoRef.current.pause();
+      }
     }
   };
 
