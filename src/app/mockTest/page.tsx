@@ -28,18 +28,18 @@ const VideoScreen = () => {
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const handleTimeUpdate = () => {
-    // if (videoRef.current) {
-    //   const currentTime = (videoRef.current as HTMLVideoElement).currentTime;
-    //   const duration = (videoRef.current as HTMLVideoElement).duration;
-    //   if (
-    //     currentTime !== undefined &&
-    //     duration !== undefined &&
-    //     duration !== 0
-    //   ) {
-    //     const progressPercent = (currentTime / duration) * 100;
-    //     setProgress(progressPercent);
-    //   }
-    // }
+    if (videoRef.current) {
+      const currentTime = (videoRef.current as HTMLVideoElement).currentTime;
+      const duration = (videoRef.current as HTMLVideoElement).duration;
+      if (
+        currentTime !== undefined &&
+        duration !== undefined &&
+        duration !== 0
+      ) {
+        const progressPercent = (currentTime / duration) * 100;
+        setProgress(progressPercent);
+      }
+    }
   };
 
   const togglePlayPause = () => {
