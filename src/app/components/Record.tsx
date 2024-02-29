@@ -8,12 +8,16 @@ const Record = ({
   sendToLLM,
   aiResults,
   saveEntryInDB,
+  isSaved,
+  screen,
 }: {
   isRecording: boolean;
   recording: any;
   sendToLLM: any;
   aiResults: any;
   saveEntryInDB: any;
+  isSaved: boolean;
+  screen: string;
 }) => {
   const options = {
     animationData: RecordingAnimation,
@@ -30,7 +34,7 @@ const Record = ({
 
   return (
     <div className="flex flex-col items-center justify-center h-full bg-stone-200 px-5">
-      {recording.length > 0 && (
+      {screen === "transcript" && (
         <div className="bg-white shadow-lg rounded-lg py-4 px-5 w-full max-w-md">
           <h5 className="text-lg font-bold text-gray-800 mb-4">
             Your Transcript:{" "}
@@ -59,7 +63,7 @@ const Record = ({
         </div>
       )}
 
-      {!isRecording && recording.length === 0 && aiResults.length > 0 && (
+      {screen === "aiResult" && (
         <div className="bg-white shadow-lg rounded-lg px-4 pt-6 pb-4 w-full max-w-md">
           <h5 className="text-xl text-teal-600 font-semibold my-3">
             Your Achievements Today:
@@ -73,18 +77,20 @@ const Record = ({
                 </li>
               ))}
           </ul>
-          <div className="card-footer flex justify-between space-x-4 my-5">
-            <button className="rounded-lg py-2 px-4 bg-red-800 text-white">
-              DELETE
-            </button>
-            <button
-              onClick={saveEntryInDB}
-              className="rounded-lg py-2 px-4 bg-teal-800 text-white
+          {!isSaved && (
+            <div className="card-footer flex justify-between space-x-4 my-5">
+              <button className="rounded-lg py-2 px-4 bg-red-800 text-white">
+                DELETE
+              </button>
+              <button
+                onClick={saveEntryInDB}
+                className="rounded-lg py-2 px-4 bg-teal-800 text-white
             "
-            >
-              SAVE
-            </button>
-          </div>
+              >
+                SAVE
+              </button>
+            </div>
+          )}
           <p className="text-sm font-semibold  text-gray-600">
             <strong>Did you know?</strong> <br />
             You may continue recording by pressing the Mic button again!
@@ -92,7 +98,7 @@ const Record = ({
         </div>
       )}
 
-      {recording.length === 0 && !isRecording && aiResults.length === 0 && (
+      {screen === "noEntry" && (
         <div className="bg-white shadow-lg rounded-lg px-4 pt-6 pb-4 w-full max-w-md">
           <h5 className="text-lg font-bold text-teal-800 mb-4 text-center">
             Make a Recording for Today{" "}

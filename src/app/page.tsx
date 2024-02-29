@@ -40,6 +40,10 @@ const Page = () => {
   const [recording, setRecording] = useState([]);
   const [dailyRecording, setDailyRecording] = useState([]);
   const [structuredResults, setStructuredResults] = useState([]);
+  const [isSaved, setIsSaved] = useState(true);
+  const [recordScreen, setRecordScreen] = useState("noEntry"); // There are 3 screens: "noEntry" | "transcript" | "aiResult"
+
+  // Speech-to-Text RELATED
   const {
     error,
     interimResult,
@@ -56,11 +60,17 @@ const Page = () => {
     // Assign automatically Recording when Rec stopps
     if (!isRecording && results.length > 0) {
       console.log(dailyRecording);
+      setIsSaved(false);
+      setRecordScreen("transcript");
+
       if (dailyRecording?.results?.length > 0) {
+        console.log("1");
+        setRecordScreen("transcript");
         setRecording([...dailyRecording.results, ...results]);
         return;
       }
 
+      console.log("2", dailyRecording);
       setRecording(results);
     }
 
@@ -77,7 +87,7 @@ const Page = () => {
     });
     return () => unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, isRecording, results]);
+  }, [isAuthenticated, isRecording]);
 
   const switchScreen = async (screen: string) => {
     await getUserEntries();
@@ -94,9 +104,17 @@ const Page = () => {
         const todaysEntry = res.find((entry: any) => entry.id === today);
 
         if (todaysEntry) {
+          console.log("Fired here", isSaved);
           setDailyRecording(todaysEntry);
           setStructuredResults(todaysEntry.structuredResults);
+
+          if (isSaved) {
+            console.log("Fired inside here");
+            setRecordScreen("aiResult");
+          }
         }
+      } else {
+        setRecordScreen("noEntries");
       }
     }
   };
@@ -161,7 +179,7 @@ const Page = () => {
       const aiResponse = await fetchOpenAIResponse(combinedTranscript);
       const aiRes = JSON.parse(aiResponse.message.content);
       setStructuredResults(aiRes);
-      setRecording([]);
+      setRecordScreen("aiResult");
       setSpinner("record", "");
     } catch (error: any) {
       console.error("Failed to fetch response from OpenAI:", error.message);
@@ -174,10 +192,16 @@ const Page = () => {
     try {
       setSpinner("spinner", "Connecting to Database...");
       await saveDailyEntry(userDTO.uid, recording, structuredResults);
+
+      // Reset all States
       setRecording([]);
       setDailyRecording([]);
       setStructuredResults([]);
       setUserEntries([]);
+      setIsSaved(true);
+      setRecordScreen("aiResult");
+
+      // Load Entries
       await getUserEntries();
       setSpinner("record", "");
     } catch (error: any) {
@@ -233,6 +257,8 @@ const Page = () => {
             isRecording={isRecording}
             recording={recording}
             aiResults={structuredResults}
+            isSaved={isSaved}
+            screen={recordScreen}
           />
         );
       case "calendar":
