@@ -5,16 +5,16 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "MY SEGW-AI",
+  title: "Get S**** Done",
   description: "PWA application with Next 13",
   generator: "Next.js",
   manifest: "/manifest.json",
   keywords: ["nextjs", "nextjs13", "next13", "pwa", "next-pwa"],
-  themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#fff" }],
+  // themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#fff" }],
   authors: [
-    { name: "Rajesh Prajapati" },
+    { name: "NiMpa" },
     {
-      name: "Rajesh Prajapati",
+      name: "NiMpa",
       url: "https://www.linkedin.com/in/raazeshp96/",
     },
   ],
