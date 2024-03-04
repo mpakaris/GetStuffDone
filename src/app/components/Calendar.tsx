@@ -12,12 +12,10 @@ export default function MyCalendar({
   const [values, setValues] = useState<Date[]>([]);
   const [selected, setSelected] = useState<any>(null) || null;
 
-  // Whenever the entries prop changes, update the state
   useEffect(() => {
     setValues(entries.map((entry: any) => new Date(entry.id)));
   }, [entries]);
 
-  // Convert entries to comparable format
   const formattedEntries = entries.map(
     (entry: any) => new Date(entry.id).toISOString().split("T")[0]
   );
@@ -27,16 +25,14 @@ export default function MyCalendar({
   };
 
   const handleDateChange = (selectedDates: any) => {
-    // Convert selectedDates to a comparable format
-    const selectedDatesFormatted = selectedDates.map(
-      (date: any) => date.format("YYYY-MM-DD") // Use the correct method for date formatting
+    const selectedDatesFormatted = selectedDates.map((date: any) =>
+      date.format("YYYY-MM-DD")
     );
 
     const valuesFormatted = values.map(
       (date: any) => date.toISOString().split("T")[0]
     );
 
-    // Find if there's a newly selected or deselected date
     let newSelected: any = null;
     for (let date of selectedDatesFormatted) {
       if (!valuesFormatted.includes(date)) {
@@ -48,25 +44,20 @@ export default function MyCalendar({
     if (newSelected) {
       console.log("Date selected: " + newSelected);
     } else {
-      // Determine if a date was deselected by comparing the previous state
       let deselectedDate: any = null;
       for (let date of valuesFormatted) {
         if (!selectedDatesFormatted.includes(date)) {
           deselectedDate = date;
-          break; // Found the deselected date, exit loop
+          break;
         }
       }
 
       if (deselectedDate) {
-        // Convert deselectedDate back to a Date object
         const deselectedDateObj = new Date(deselectedDate);
-        // Add the deselectedDateObj to the values array
         setValues((prevValues) => [...prevValues, deselectedDateObj]);
-        // Find the entry in the entries array where id matches deselectedDate
         const selectedEntry = entries.find(
           (entry: any) => entry.id === deselectedDate
         );
-        // Assign the found entry to the selected state variable
         setSelected(selectedEntry);
       }
     }
