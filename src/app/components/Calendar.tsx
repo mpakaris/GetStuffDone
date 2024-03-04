@@ -33,7 +33,7 @@ export default function MyCalendar({
     );
 
     // Find if there's a newly selected or deselected date
-    let newSelected = null;
+    let newSelected: any = null;
     for (let date of selectedDatesFormatted) {
       if (!valuesFormatted.includes(date)) {
         newSelected = date;
