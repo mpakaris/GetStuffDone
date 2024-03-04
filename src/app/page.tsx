@@ -77,10 +77,8 @@ const Page = () => {
         setUserDTO(user);
         setIsAuthenticated(true);
         getUserEntries();
-        console.log("Fired Here!");
       } else {
         setIsAuthenticated(false);
-        console.log("Fired Here!");
       }
     });
     return () => unsubscribe();
@@ -163,12 +161,10 @@ const Page = () => {
 
   const onMicClick = () => {
     if (currentScreen !== "record") {
-      console.log("Fired Here!");
       setCurrentScreen("record");
       return;
     }
 
-    console.log("Fired Here!");
     setStructuredResults([]);
     return isRecording ? stopSpeechToText() : startSpeechToText();
   };
@@ -186,7 +182,6 @@ const Page = () => {
     try {
       setSpinner("spinner", "The AI is working...");
       const aiResponse = await fetchOpenAIResponse(combinedTranscript);
-      console.log(aiResponse)
       const aiRes = JSON.parse(aiResponse.message.content);
       setStructuredResults(aiRes);
       setRecordScreen("aiResult");
