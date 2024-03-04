@@ -1,6 +1,12 @@
 "use client";
 
-export default function RegisterForm({ onRegister, onSwitchScreen }) {
+export default function RegisterForm({
+  onRegister,
+  onSwitchScreen,
+}: {
+  onRegister: any;
+  onSwitchScreen: any;
+}) {
   const handleSubmit = (event: any) => {
     event.preventDefault();
     const { email, password } = event.target.elements;
