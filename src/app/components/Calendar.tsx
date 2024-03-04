@@ -26,16 +26,18 @@ export default function MyCalendar({
     id: string;
   };
 
-  const handleDateChange = (selectedDates: Date[]) => {
+  const handleDateChange = (selectedDates: any) => {
+    // Convert selectedDates to a comparable format
     const selectedDatesFormatted = selectedDates.map(
-      (date) => date.toISOString().split("T")[0]
+      (date: any) => date.format("YYYY-MM-DD") // Use the correct method for date formatting
     );
 
     const valuesFormatted = values.map(
       (date: any) => date.toISOString().split("T")[0]
     );
 
-    let newSelected: string | null = null;
+    // Find if there's a newly selected or deselected date
+    let newSelected: any = null;
     for (let date of selectedDatesFormatted) {
       if (!valuesFormatted.includes(date)) {
         newSelected = date;
@@ -46,21 +48,25 @@ export default function MyCalendar({
     if (newSelected) {
       console.log("Date selected: " + newSelected);
     } else {
-      let deselectedDate: string | null = null;
+      // Determine if a date was deselected by comparing the previous state
+      let deselectedDate: any = null;
       for (let date of valuesFormatted) {
         if (!selectedDatesFormatted.includes(date)) {
           deselectedDate = date;
-          break;
+          break; // Found the deselected date, exit loop
         }
       }
 
       if (deselectedDate) {
-        const deselectedDateObj = new Date(deselectedDate + "T00:00:00"); // Assuming deselectedDate is in 'YYYY-MM-DD' format
+        // Convert deselectedDate back to a Date object
+        const deselectedDateObj = new Date(deselectedDate);
+        // Add the deselectedDateObj to the values array
         setValues((prevValues) => [...prevValues, deselectedDateObj]);
-
+        // Find the entry in the entries array where id matches deselectedDate
         const selectedEntry = entries.find(
           (entry: any) => entry.id === deselectedDate
         );
+        // Assign the found entry to the selected state variable
         setSelected(selectedEntry);
       }
     }
