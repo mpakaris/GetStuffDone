@@ -9,8 +9,8 @@ export default function MyCalendar({
   entries: any;
   deleteUserEntry: any;
 }) {
-  const [values, setValues] = useState([]);
-  const [selected, setSelected] = useState(null);
+  const [values, setValues] = useState<Date[]>([]);
+  const [selected, setSelected] = useState<any>(null) || null;
 
   // Whenever the entries prop changes, update the state
   useEffect(() => {
