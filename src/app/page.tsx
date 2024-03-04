@@ -138,7 +138,7 @@ const Page = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      setCurrentScreen("loggedOut");
+      setCurrentScreen("home");
     } catch (error) {
       console.error("Error signing out:", error);
     }
