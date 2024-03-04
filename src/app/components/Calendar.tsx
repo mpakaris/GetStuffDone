@@ -32,7 +32,7 @@ export default function MyCalendar({
     );
 
     const valuesFormatted = values.map(
-      (date) => date.toISOString().split("T")[0]
+      (date: any) => date.toISOString().split("T")[0]
     );
 
     let newSelected: string | null = null;
