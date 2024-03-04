@@ -186,6 +186,7 @@ const Page = () => {
     try {
       setSpinner("spinner", "The AI is working...");
       const aiResponse = await fetchOpenAIResponse(combinedTranscript);
+      console.log(aiResponse)
       const aiRes = JSON.parse(aiResponse.message.content);
       setStructuredResults(aiRes);
       setRecordScreen("aiResult");
