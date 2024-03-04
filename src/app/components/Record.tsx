@@ -10,6 +10,7 @@ const Record = ({
   saveEntryInDB,
   isSaved,
   screen,
+  isAuthenticated,
 }: {
   isRecording: boolean;
   recording: any;
@@ -18,6 +19,7 @@ const Record = ({
   saveEntryInDB: any;
   isSaved: boolean;
   screen: string;
+  isAuthenticated: boolean;
 }) => {
   const options = {
     animationData: RecordingAnimation,
@@ -77,7 +79,13 @@ const Record = ({
                 </li>
               ))}
           </ul>
-          {!isSaved && (
+          {!isRecording && aiResults.length === 0 && (
+            <p>
+              <strong>Attention:</strong> <br />
+              It seems, that AI could not analyse your transcript.
+            </p>
+          )}
+          {!isSaved && isAuthenticated && (
             <div className="card-footer flex justify-between space-x-4 my-5">
               <button className="rounded-lg py-2 px-4 bg-red-800 text-white">
                 DELETE
@@ -90,6 +98,13 @@ const Record = ({
                 SAVE
               </button>
             </div>
+          )}
+          {!isAuthenticated && (
+            <p className="text-base font-semibold text-teal-600 my-5">
+              It seems that you are not logged in. <br />
+              You cant save the entry if you are not logged in. <br />
+              Go to 'Profile' to LogIn or Register.
+            </p>
           )}
           <p className="text-sm font-semibold  text-gray-600">
             <strong>Did you know?</strong> <br />

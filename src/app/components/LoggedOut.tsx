@@ -1,12 +1,12 @@
-const NotLoggedIn = ({ switchScreen }: { switchScreen: any }) => {
+const LoggedOut = () => {
   return (
     <>
       <div className="flex flex-col items-center justify-center h-full bg-stone-200 px-5">
         <div className="bg-white shadow-lg rounded-lg py-4 px-5 w-full max-w-md">
           <h5 className="text-lg font-bold text-gray-800 mb-4">Sorry</h5>
           <p className="text-sm font-semibold mb-10">
-            It seems, that you are currently not logged in. <br />
-            Please Register and/or Login to use this function!
+            We are sad to see you leave. <br />
+            Please Register and/or Login to continue!
           </p>
           <div className="flex flex-col space-y-4">
             <button

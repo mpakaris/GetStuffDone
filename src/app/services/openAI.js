@@ -31,7 +31,15 @@ export const fetchOpenAIResponse = async (context) => {
    Leisure & Relaxation
    Hobbies & Creative Projects
    
-   Answer direct. Do not explain. Do not make any data up. Only use the referenced information.
+   Answer direct. Do not explain. 
+   It is important that you Do not make any data up. 
+   Sometimes, you may struggle to understand the transcript. 
+   In such cases, it is important that you do not make up and data. 
+   Either skip or return an empty Array. 
+   Only use the referenced information given in the transcript reference. 
+   Always answer in the language of the transcript. 
+
+
    Return an Array of JSON Objects with the following structure / key-value pairs: 
    Make sure that the keys are also in quotatin marks, otherwise we throw an Error! 
 
@@ -40,7 +48,7 @@ export const fetchOpenAIResponse = async (context) => {
    
    Here is an example: 
    [{
-    "activity": Summary of what the User did,
+    "activity": Summary of what the User did in a general form (e.g. Gym, Pet walk, Reading, etc.  ),
     "category": See Categories,
     "duration": in minutes,
     "desc": any remarks if the context provides for example: It made him happy, anxious or similar otherwise it should remain ""
@@ -70,7 +78,7 @@ export const fetchOpenAIResponse = async (context) => {
       },
       {
         headers: {
-          Authorization: `Bearer `,
+          Authorization: `Bearer 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`,
         },
       }
     );

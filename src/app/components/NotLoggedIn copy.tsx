@@ -1,4 +1,4 @@
-const NotLoggedIn = ({ switchScreen }: { switchScreen: any }) => {
+const LoggedOu = ({ switchScreen }: { switchScreen: any }) => {
   return (
     <>
       <div className="flex flex-col items-center justify-center h-full bg-stone-200 px-5">

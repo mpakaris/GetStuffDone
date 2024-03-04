@@ -32,7 +32,7 @@ import { fetchOpenAIResponse } from "./services/openAI";
 const Page = () => {
   // USER RELATED
   const [userDTO, setUserDTO] = useState({});
-  const [currentScreen, setCurrentScreen] = useState("login");
+  const [currentScreen, setCurrentScreen] = useState("home");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // ENTRY RELATED
@@ -77,10 +77,10 @@ const Page = () => {
         setUserDTO(user);
         setIsAuthenticated(true);
         getUserEntries();
-        setCurrentScreen("home");
+        console.log("Fired Here!");
       } else {
         setIsAuthenticated(false);
-        setCurrentScreen("home");
+        console.log("Fired Here!");
       }
     });
     return () => unsubscribe();
@@ -140,6 +140,7 @@ const Page = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      setCurrentScreen("loggedOut");
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -162,9 +163,12 @@ const Page = () => {
 
   const onMicClick = () => {
     if (currentScreen !== "record") {
+      console.log("Fired Here!");
       setCurrentScreen("record");
       return;
     }
+
+    console.log("Fired Here!");
     setStructuredResults([]);
     return isRecording ? stopSpeechToText() : startSpeechToText();
   };
@@ -267,6 +271,7 @@ const Page = () => {
             aiResults={structuredResults}
             isSaved={isSaved}
             screen={recordScreen}
+            isAuthenticated={isAuthenticated}
           />
         );
       case "calendar":
