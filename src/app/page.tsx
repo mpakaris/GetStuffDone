@@ -14,6 +14,7 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Home from "./components/Home";
 import LoginForm from "./components/LoginForm";
+import NotLoggedIn from "./components/NotLoggedIn";
 import Profile from "./components/Profile";
 import Record from "./components/Record";
 import RegisterForm from "./components/RegisterForm";
@@ -31,7 +32,7 @@ import { fetchOpenAIResponse } from "./services/openAI";
 const Page = () => {
   // USER RELATED
   const [userDTO, setUserDTO] = useState({});
-  const [currentScreen, setCurrentScreen] = useState("record");
+  const [currentScreen, setCurrentScreen] = useState("login");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // ENTRY RELATED
@@ -59,18 +60,15 @@ const Page = () => {
   useEffect(() => {
     // Assign automatically Recording when Rec stopps
     if (!isRecording && results.length > 0) {
-      console.log(dailyRecording);
       setIsSaved(false);
       setRecordScreen("transcript");
 
       if (dailyRecording?.results?.length > 0) {
-        console.log("1");
         setRecordScreen("transcript");
         setRecording([...dailyRecording.results, ...results]);
         return;
       }
 
-      console.log("2", dailyRecording);
       setRecording(results);
     }
 
@@ -79,10 +77,10 @@ const Page = () => {
         setUserDTO(user);
         setIsAuthenticated(true);
         getUserEntries();
-        setCurrentScreen("record");
+        setCurrentScreen("home");
       } else {
         setIsAuthenticated(false);
-        setCurrentScreen("login");
+        setCurrentScreen("home");
       }
     });
     return () => unsubscribe();
@@ -90,6 +88,15 @@ const Page = () => {
   }, [isAuthenticated, isRecording]);
 
   const switchScreen = async (screen: string) => {
+    if (
+      (!isAuthenticated && screen === "calendar") ||
+      (!isAuthenticated && screen === "statistics") ||
+      (!isAuthenticated && screen === "profile")
+    ) {
+      setCurrentScreen("notLoggedIn");
+      return;
+    }
+
     await getUserEntries();
     setCurrentScreen(screen);
   };
@@ -104,12 +111,10 @@ const Page = () => {
         const todaysEntry = res.find((entry: any) => entry.id === today);
 
         if (todaysEntry) {
-          console.log("Fired here", isSaved);
           setDailyRecording(todaysEntry);
           setStructuredResults(todaysEntry.structuredResults);
 
           if (isSaved) {
-            console.log("Fired inside here");
             setRecordScreen("aiResult");
           }
         }
@@ -189,6 +194,11 @@ const Page = () => {
   };
 
   const saveEntryInDB = async () => {
+    if (!isAuthenticated) {
+      setCurrentScreen("notLoggedIn");
+      return;
+    }
+
     try {
       setSpinner("spinner", "Connecting to Database...");
       await saveDailyEntry(userDTO.uid, recording, structuredResults);
@@ -212,8 +222,6 @@ const Page = () => {
   };
 
   const deleteUserEntry = async (date: string) => {
-    console.log(date);
-
     try {
       const res = await deleteUserEntryByDate(userDTO.uid, date);
       await getUserEntries();
@@ -268,7 +276,9 @@ const Page = () => {
       case "statistics":
         return <Statistics userEntries={userEntries} />;
       case "home":
-        return <Home userEntries={userEntries} />;
+        return (
+          <Home userEntries={userEntries} isAuthenticated={isAuthenticated} />
+        );
       case "profile":
         return (
           <Profile
@@ -280,6 +290,8 @@ const Page = () => {
         );
       case "spinner":
         return <SpinnerScreen message={spinnerMessage} />;
+      case "notLoggedIn":
+        return <NotLoggedIn switchScreen={switchScreen} />;
       default:
         return <div>Screen not found</div>;
     }
@@ -289,13 +301,11 @@ const Page = () => {
     <div className="flex flex-col h-screen">
       <Header />
       <main className="flex-grow overflow-auto">{renderContent()}</main>
-      {isAuthenticated && (
-        <Footer
-          onMicClick={onMicClick}
-          isRecording={isRecording}
-          switchScreen={switchScreen}
-        />
-      )}
+      <Footer
+        onMicClick={onMicClick}
+        isRecording={isRecording}
+        switchScreen={switchScreen}
+      />
       <ToastContainer
         position="top-right"
         autoClose={2000}

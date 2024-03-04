@@ -1,6 +1,10 @@
-const WelcomeMsg = () => {
+const WelcomeMsg = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
   return (
-    <div className="bg-white bg-opacity-60 border-gray-600 p-2 rounded-lg shadow-2xl max-w-sm mx-auto overflow-y-auto mt-4 mb-10 max-h-[65vh]">
+    <div
+      className={`bg-white my-10 bg-opacity-60 border-gray-600 p-2 rounded-lg 
+    shadow-2xl max-w-sm mx-auto overflow-y-auto mt-0 mb-10 
+    ${isAuthenticated ? "max-h-[60vh]" : "max-h-[75vh]"}`}
+    >
       <div className="card-body">
         <div className="text-sm p-4 max-w-4xl mx-auto text-gray-700">
           <h1 className="font-semibold mb-4 text-xl">

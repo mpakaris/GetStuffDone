@@ -70,7 +70,7 @@ export const fetchOpenAIResponse = async (context) => {
       },
       {
         headers: {
-          Authorization: `Bearer sk-`,
+          Authorization: `Bearer `,
         },
       }
     );

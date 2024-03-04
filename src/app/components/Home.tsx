@@ -3,7 +3,13 @@ import { useEffect, useState } from "react";
 import CelebrationAnimation from "../../../public/images/CelebrationAnimation.json";
 import WelcomeMsg from "./WelcomeMsg";
 
-const Home = ({ userEntries }: { userEntries: any }) => {
+const Home = ({
+  userEntries,
+  isAuthenticated,
+}: {
+  userEntries: any;
+  isAuthenticated: boolean;
+}) => {
   const [animation, setAnimation] = useState(true);
 
   useEffect(() => {
@@ -30,33 +36,39 @@ const Home = ({ userEntries }: { userEntries: any }) => {
   };
   return (
     <>
-      <div className="relative flex flex-col items-center justify-center max-h-[95vh] overflow-auto bg-stone-200">
+      <div className="relative flex flex-col items-center justify-center h-full overflow-auto bg-stone-200">
         {/* Current Entries */}
-        <div
-          className="max-w-sm rounded-xl shadow-lg mb-2
+        {isAuthenticated && (
+          <div
+            className="max-w-sm rounded-xl shadow-lg mb-2
           bg-white mx-auto p-3 border border-gray-800 w-full"
-        >
-          <p className="font-bold text-lg text-gray-700">
-            Current Entries: {userEntries?.length || 0}
-          </p>
-        </div>
+          >
+            <p className="font-bold text-lg text-gray-700">
+              Current Entries: {userEntries?.length || 0}
+            </p>
+          </div>
+        )}
 
         {/* Accomplished Tasks Overall */}
-        <div
-          className="max-w-sm rounded-xl shadow-lg 
-          bg-white mx-auto p-3 border border-gray-800 w-full"
-        >
-          <p className="font-bold text-lg text-gray-700">
-            Tasks Accomplished: {countAccomplishments()}
-          </p>
-        </div>
+
+        {isAuthenticated && (
+          <div
+            className="max-w-sm rounded-xl shadow-lg 
+          bg-white mb-5 mx-auto p-3 border border-gray-800 w-full"
+          >
+            <p className="font-bold text-lg text-gray-700">
+              Tasks Accomplished: {countAccomplishments()}
+            </p>
+          </div>
+        )}
 
         {/* How this works */}
-        <WelcomeMsg />
+        <WelcomeMsg isAuthenticated={isAuthenticated} />
       </div>
-
       {/* Celebration Animation */}
-      {animation && <div className="absolute inset-0 z-50">{View}</div>}
+      {isAuthenticated && animation && (
+        <div className="absolute inset-0 z-50">{View}</div>
+      )}{" "}
     </>
   );
 };
