@@ -31,18 +31,20 @@ import { fetchOpenAIResponse } from "./services/openAI";
 
 const Page = () => {
   // USER RELATED
-  const [userDTO, setUserDTO] = useState({});
-  const [currentScreen, setCurrentScreen] = useState("home");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userDTO, setUserDTO] = useState<any>({});
+  const [currentScreen, setCurrentScreen] = useState<string>("home");
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   // ENTRY RELATED
-  const [userEntries, setUserEntries] = useState([]);
-  const [spinnerMessage, setSpinnerMessage] = useState("");
-  const [recording, setRecording] = useState([]);
-  const [dailyRecording, setDailyRecording] = useState([]);
-  const [structuredResults, setStructuredResults] = useState([]);
-  const [isSaved, setIsSaved] = useState(true);
-  const [recordScreen, setRecordScreen] = useState("noEntry"); // There are 3 screens: "noEntry" | "transcript" | "aiResult"
+  const [userEntries, setUserEntries] = useState<any>([]);
+  const [spinnerMessage, setSpinnerMessage] = useState<string>("");
+  const [recording, setRecording] = useState<any>([]);
+  const [dailyRecording, setDailyRecording] = useState<any>([]);
+  const [structuredResults, setStructuredResults] = useState<any>([]);
+  const [isSaved, setIsSaved] = useState<boolean>(true);
+  
+  // There are 3 screens: "noEntry" | "transcript" | "aiResult"
+  const [recordScreen, setRecordScreen] = useState<string>("noEntry"); 
 
   // Speech-to-Text RELATED
   const {
