@@ -18,7 +18,7 @@ const Footer = ({
 }) => {
   return (
     <div className="fixed inset-x-0 bottom-0 bg-gray-500 shadow-lg">
-      <div className="flex justify-around items-center p-2">
+      <div className="flex justify-around items-center pb-5 pt-3">
         <button className="rounded-full p-4 bg-stone-200">
           <FaHome className="text-xl" onClick={() => switchScreen("home")} />
         </button>

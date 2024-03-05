@@ -103,7 +103,7 @@ const Statistics = ({ userEntries }: { userEntries: any }) => {
   return (
     <>
       {userEntries ? (
-        <div className="flex flex-col justify-start items-center bg-stone-200 h-full max-h-[90vh] p-6">
+        <div className="flex flex-col justify-start items-center bg-stone-200 h-full p-6">
           <div className="grid grid-cols-5 gap-2 justify-center items-start">
             {icons.map((category) => (
               <div key={category.name} className="mt-5 text-center">

@@ -10,7 +10,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Calendar from "./components/Calendar";
 import Footer from "./components/Footer";
-import Header from "./components/Header";
 import Home from "./components/Home";
 import LoginForm from "./components/LoginForm";
 import MyTest from "./components/MyTest";
@@ -368,7 +367,7 @@ const Page = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <Header />
+      {/* <Header /> */}
       <main className="flex-grow overflow-auto">{renderContent()}</main>
       <Footer
         onMicClick={onMicClick}
