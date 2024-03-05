@@ -23,7 +23,7 @@ const Record = ({
 }) => {
   return (
     <div className="flex flex-col items-center justify-center h-full bg-stone-200 px-5">
-      {screen === "transcript" && (
+      {screen === "transcript" && transcript.lenght > 0 && (
         <div className="bg-white shadow-lg rounded-lg py-4 px-5 w-full max-w-md">
           <h5 className="text-lg font-bold text-gray-800 mb-4">
             Your Transcript:{" "}
