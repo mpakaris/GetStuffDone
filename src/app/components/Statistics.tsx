@@ -48,19 +48,15 @@ const Statistics = ({ userEntries }: { userEntries: any }) => {
     { name: "Hobbies", icon: <MdFavorite /> },
   ];
 
-  // Inside your component
   const data = useMemo(() => {
-    // Your logic to construct the 'data' object goes here.
-    // This is just a placeholder; replace it with your actual data construction logic.
-    if (userEntries) {
+    // Return a default data structure if userEntries is falsy --> TO AVOID TYPES ERROR
+    if (!userEntries || userEntries.length === 0) {
       return {
-        labels: userEntries.map((entry: any) => entry.id),
+        labels: [],
         datasets: [
           {
             label: "Tasks Completed",
-            data: userEntries.map(
-              (entry: any) => entry.structuredResults.length
-            ),
+            data: [],
             fill: false,
             backgroundColor: "rgb(255, 99, 132)",
             borderColor: "rgba(255, 99, 132, 0.2)",
@@ -68,6 +64,20 @@ const Statistics = ({ userEntries }: { userEntries: any }) => {
         ],
       };
     }
+
+    // Your original logic when userEntries is truthy
+    return {
+      labels: userEntries.map((entry: any) => entry.id),
+      datasets: [
+        {
+          label: "Tasks Completed",
+          data: userEntries.map((entry: any) => entry.structuredResults.length),
+          fill: false,
+          backgroundColor: "rgb(255, 99, 132)",
+          borderColor: "rgba(255, 99, 132, 0.2)",
+        },
+      ],
+    };
   }, [userEntries]);
 
   const options = {
