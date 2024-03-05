@@ -30,6 +30,8 @@ import {
 import { fetchOpenAIResponse } from "./services/openAI";
 
 const Page = () => {
+  const isBrowser = typeof window !== "undefined";
+
   // USER RELATED
   const [userDTO, setUserDTO] = useState<any>({});
   const [currentScreen, setCurrentScreen] = useState<string>("home");
@@ -42,9 +44,9 @@ const Page = () => {
   const [dailyRecording, setDailyRecording] = useState<any>([]);
   const [structuredResults, setStructuredResults] = useState<any>([]);
   const [isSaved, setIsSaved] = useState<boolean>(true);
-  
+
   // There are 3 screens: "noEntry" | "transcript" | "aiResult"
-  const [recordScreen, setRecordScreen] = useState<string>("noEntry"); 
+  const [recordScreen, setRecordScreen] = useState<string>("noEntry");
 
   // Speech-to-Text RELATED
   const {
@@ -167,8 +169,10 @@ const Page = () => {
       return;
     }
 
-    setStructuredResults([]);
-    return isRecording ? stopSpeechToText() : startSpeechToText();
+    if (isBrowser) {
+      setStructuredResults([]);
+      return isRecording ? stopSpeechToText() : startSpeechToText();
+    }
   };
 
   const setSpinner = (screen: string, msg: string) => {
