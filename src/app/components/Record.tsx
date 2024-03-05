@@ -1,39 +1,26 @@
 "use client";
-import { useLottie } from "lottie-react";
-import RecordingAnimation from "../../../public/images/RecordingAnimation.json";
 
 const Record = ({
-  isRecording,
-  recording,
+  isListening,
+  transcript,
   sendToLLM,
   aiResults,
   saveEntryInDB,
   isSaved,
   screen,
   isAuthenticated,
+  handleDelete,
 }: {
-  isRecording: boolean;
-  recording: any;
+  isListening: boolean;
+  transcript: any;
   sendToLLM: any;
   aiResults: any;
   saveEntryInDB: any;
   isSaved: boolean;
   screen: string;
   isAuthenticated: boolean;
+  handleDelete: any;
 }) => {
-  const options = {
-    animationData: RecordingAnimation,
-    loop: true,
-  };
-  const { View } = useLottie(options);
-
-  function transcriptDisplay() {
-    const combinedTranscript = recording
-      .map((item: any) => item.transcript)
-      .join(" ");
-    return `"` + combinedTranscript + `"`;
-  }
-
   return (
     <div className="flex flex-col items-center justify-center h-full bg-stone-200 px-5">
       {screen === "transcript" && (
@@ -41,9 +28,12 @@ const Record = ({
           <h5 className="text-lg font-bold text-gray-800 mb-4">
             Your Transcript:{" "}
           </h5>
-          <p className="text-sm font-semibold mb-10">{transcriptDisplay()}</p>
+          <p className="text-sm font-semibold mb-10">{transcript}</p>
           <div className="card-footer flex justify-between space-x-4 mb-5">
-            <button className="rounded-lg py-2 px-4 bg-red-800 text-white">
+            <button
+              onClick={handleDelete}
+              className="rounded-lg py-2 px-4 bg-red-800 text-white"
+            >
               DELETE ALL
             </button>
             <button
@@ -79,15 +69,18 @@ const Record = ({
                 </li>
               ))}
           </ul>
-          {!isRecording && aiResults.length === 0 && (
-            <p>
+          {!isListening && aiResults.length === 0 && (
+            <p className="text-red-800 font-semibold text-base mt-5">
               <strong>Attention:</strong> <br />
               It seems, that AI could not analyse your transcript.
             </p>
           )}
-          {!isSaved && isAuthenticated && (
+          {!isSaved && isAuthenticated && aiResults.length > 0 && (
             <div className="card-footer flex justify-between space-x-4 my-5">
-              <button className="rounded-lg py-2 px-4 bg-red-800 text-white">
+              <button
+                onClick={handleDelete}
+                className="rounded-lg py-2 px-4 bg-red-800 text-white"
+              >
                 DELETE
               </button>
               <button
@@ -106,7 +99,7 @@ const Record = ({
               Go to 'Profile' to LogIn or Register.
             </p>
           )}
-          <p className="text-sm font-semibold  text-gray-600">
+          <p className="text-sm font-semibold  text-gray-600 mt-5">
             <strong>Did you know?</strong> <br />
             You may continue recording by pressing the Mic button again!
           </p>
@@ -139,12 +132,11 @@ const Record = ({
       )}
 
       {/* Recording Animation when Microphone is On */}
-      {isRecording && (
+      {isListening && (
         <div className="p-20 relative">
           <p className="text-center font-bold text-3xl text-red-800 animate-bounce mb-3">
             REC
           </p>
-          <div>{View}</div>
         </div>
       )}
     </div>

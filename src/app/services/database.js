@@ -8,6 +8,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   query,
   setDoc,
@@ -118,5 +119,39 @@ export const deleteAccount = async (email, password) => {
     console.log("User account deleted successfully.");
   } catch (error) {
     console.error("Error during re-authentication or account deletion:", error);
+  }
+};
+
+export const updateUserSettings = async (userId, language) => {
+  const settings = {
+    language: language,
+    subscription: "free",
+  };
+
+  const userDocRef = doc(db, "Users", userId);
+
+  try {
+    await setDoc(userDocRef, settings, { merge: true });
+  } catch (error) {
+    console.error("Failed to update user settings in DB:", error);
+    throw error;
+  }
+};
+
+export const fetchUserSettings = async (userId) => {
+  const userSettingsRef = doc(db, "Users", userId);
+
+  try {
+    const docSnap = await getDoc(userSettingsRef);
+
+    if (docSnap.exists()) {
+      return docSnap.data();
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Failed to fetch user settings from DB:", error);
+    throw error;
   }
 };

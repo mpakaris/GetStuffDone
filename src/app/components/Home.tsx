@@ -1,6 +1,3 @@
-import { useLottie } from "lottie-react";
-import { useEffect, useState } from "react";
-import CelebrationAnimation from "../../../public/images/CelebrationAnimation.json";
 import WelcomeMsg from "./WelcomeMsg";
 
 const Home = ({
@@ -10,21 +7,6 @@ const Home = ({
   userEntries: any;
   isAuthenticated: boolean;
 }) => {
-  const [animation, setAnimation] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setAnimation(false);
-    }, 1000);
-  });
-
-  const options = {
-    animationData: CelebrationAnimation,
-    loop: true,
-  };
-
-  const { View } = useLottie(options);
-
   const countAccomplishments = () => {
     let counter = 0;
     if (userEntries) {
@@ -65,10 +47,6 @@ const Home = ({
         {/* How this works */}
         <WelcomeMsg isAuthenticated={isAuthenticated} />
       </div>
-      {/* Celebration Animation */}
-      {isAuthenticated && animation && (
-        <div className="absolute inset-0 z-50">{View}</div>
-      )}{" "}
     </>
   );
 };

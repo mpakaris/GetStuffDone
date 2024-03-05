@@ -2,20 +2,26 @@ import { useState } from "react";
 import { FaRedo, FaSignOutAlt, FaTrash, FaUser } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { deleteAccount } from "../services/database";
+import SetRecLanguage from "./SetRecLanguage";
 
 const Profile = ({
   userDTO,
   handleLogout,
   deleteAllEntries,
   userEntries,
+  handleLanguageChange,
+  language,
+  subscription
 }: {
   userDTO: any;
   handleLogout: any;
   deleteAllEntries: any;
   userEntries: any;
+  handleLanguageChange: any;
+  language: string;
+  subscription: string;
 }) => {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
-  const subscriptionPlan = userDTO.subscriptionPlan || "Free-Trial";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -53,9 +59,13 @@ const Profile = ({
               <h1 className="text-2xl font-bold text-gray-800">
                 {userDTO.email}
               </h1>
-              <p className="text-gray-600">Subscription: {subscriptionPlan}</p>
+              <p className="text-gray-600">Subscription: {subscription}</p>
             </div>
             <div className="flex flex-col space-y-4">
+              <SetRecLanguage
+                handleLanguageChange={handleLanguageChange}
+                language={language}
+              />
               <button
                 onClick={handleLogout}
                 className="flex mb-5 items-center justify-center px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-400 w-full"

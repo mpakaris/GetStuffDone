@@ -6,7 +6,6 @@ import {
   signOut,
 } from "firebase/auth";
 import { useEffect, useState } from "react";
-import useSpeechToText from "react-hook-speech-to-text";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Calendar from "./components/Calendar";
@@ -14,6 +13,7 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Home from "./components/Home";
 import LoginForm from "./components/LoginForm";
+import MyTest from "./components/MyTest";
 import NotLoggedIn from "./components/NotLoggedIn";
 import Profile from "./components/Profile";
 import Record from "./components/Record";
@@ -24,8 +24,10 @@ import { auth } from "./firebase/firebaseConfig";
 import {
   deleteAllUserEntries,
   deleteUserEntryByDate,
+  fetchUserSettings,
   getAllEntriesOfUser,
   saveDailyEntry,
+  updateUserSettings,
 } from "./services/database";
 import { fetchOpenAIResponse } from "./services/openAI";
 
@@ -38,7 +40,6 @@ const Page = () => {
   // ENTRY RELATED
   const [userEntries, setUserEntries] = useState<any>([]);
   const [spinnerMessage, setSpinnerMessage] = useState<string>("");
-  const [recording, setRecording] = useState<any>([]);
   const [dailyRecording, setDailyRecording] = useState<any>([]);
   const [structuredResults, setStructuredResults] = useState<any>([]);
   const [isSaved, setIsSaved] = useState<boolean>(true);
@@ -46,46 +47,60 @@ const Page = () => {
   // There are 3 screens: "noEntry" | "transcript" | "aiResult"
   const [recordScreen, setRecordScreen] = useState<string>("noEntry");
 
-  // Speech-to-Text RELATED
-  const {
-    error,
-    interimResult,
-    isRecording,
-    results,
-    startSpeechToText,
-    stopSpeechToText,
-  } = useSpeechToText({
-    continuous: true,
-    useLegacyResults: false,
-  });
+  // NEW RECORDIER - WEB SPEECH API
+  const [isListening, setIsListening] = useState<boolean>(false);
+  const [transcript, setTranscript] = useState<string>("");
+  const [language, setLanguage] = useState<string>("us-US");
+  const [subscription, setSubscription] = useState<string>("free");
+  const [recognition, setRecognition] = useState<any>(null);
 
   useEffect(() => {
-    // Assign automatically Recording when Rec stopps
-    if (!isRecording && results.length > 0) {
+    // Speech Recognition setup
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognitionInstance = new SpeechRecognition();
+    recognitionInstance.continuous = true;
+    recognitionInstance.lang = language;
+
+    recognitionInstance.onresult = (event) => {
+      const currentTranscript = Array.from(event.results)
+        .map((result) => result[0].transcript)
+        .join("");
+      setTranscript(
+        (prevTranscript) => prevTranscript + " " + currentTranscript
+      );
       setIsSaved(false);
       setRecordScreen("transcript");
+    };
 
-      if (dailyRecording?.results?.length > 0) {
-        setRecordScreen("transcript");
-        setRecording([...dailyRecording.results, ...results]);
-        return;
-      }
+    recognitionInstance.onend = () => {
+      setIsListening(false);
+    };
 
-      setRecording(results);
-    }
+    recognitionInstance.onerror = (event) => {
+      console.error("Speech Recognition Error:", event.error);
+    };
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    setRecognition(recognitionInstance);
+
+    // Firebase Auth setup
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUserDTO(user);
         setIsAuthenticated(true);
-        getUserEntries();
+        await getUserEntries();
+        await getUserSettings();
       } else {
         setIsAuthenticated(false);
       }
     });
-    return () => unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, isRecording]);
+
+    // Combined cleanup function
+    return () => {
+      recognitionInstance.stop();
+      unsubscribe();
+    };
+  }, [language, isAuthenticated]); // Ensure dependencies are correct
 
   const switchScreen = async (screen: string) => {
     if (
@@ -113,6 +128,7 @@ const Page = () => {
         if (todaysEntry) {
           setDailyRecording(todaysEntry);
           setStructuredResults(todaysEntry.structuredResults);
+          setTranscript(todaysEntry.results);
 
           if (isSaved) {
             setRecordScreen("aiResult");
@@ -121,6 +137,18 @@ const Page = () => {
       } else {
         setRecordScreen("noEntries");
       }
+    }
+  };
+
+  const getUserSettings = async () => {
+    if (userDTO && userDTO.uid) {
+      const res = await fetchUserSettings(userDTO.uid);
+      if (res) {
+        setLanguage(res.language);
+        setSubscription(res.subscription);
+      }
+    } else {
+      console.log("User DTO is undefined or does not have a uid");
     }
   };
 
@@ -167,8 +195,35 @@ const Page = () => {
       return;
     }
 
+    setRecordScreen("");
     setStructuredResults([]);
-    return isRecording ? stopSpeechToText() : startSpeechToText();
+    if (!isListening) {
+      recognition.start();
+      setIsListening(true);
+    } else {
+      recognition.stop();
+      setIsListening(false);
+    }
+  };
+
+  // Function to handle language change
+  const handleLanguageChange = async (event: any) => {
+    const newLanguage = event.target.value;
+    if (isListening && recognition) {
+      recognition.stop();
+    }
+
+    try {
+      await updateUserSettings(userDTO.uid, newLanguage);
+      // After awaiting the update, you set the new language
+      setLanguage(newLanguage);
+      setTranscript("");
+      setIsListening(false); // This should trigger a re-render as well
+      toast("Language successfully updated!");
+      console.log(`Language set to ${newLanguage}`); // Debugging log
+    } catch (error: any) {
+      console.error("Error when changing language: ", error.message);
+    }
   };
 
   const setSpinner = (screen: string, msg: string) => {
@@ -177,20 +232,16 @@ const Page = () => {
   };
 
   const sendToLLM = async () => {
-    const combinedTranscript = recording
-      .map((item: any) => item.transcript)
-      .join(" ");
-
     try {
       setSpinner("spinner", "The AI is working...");
-      const aiResponse = await fetchOpenAIResponse(combinedTranscript);
+      const aiResponse = await fetchOpenAIResponse(transcript);
       const aiRes = JSON.parse(aiResponse.message.content);
       setStructuredResults(aiRes);
       setRecordScreen("aiResult");
       setSpinner("record", "");
     } catch (error: any) {
       console.error("Failed to fetch response from OpenAI:", error.message);
-      toast("Uppps, something went wrong.");
+      toast("Uppps, the AI had an issue. Please try again.");
       setSpinner("record", "");
     }
   };
@@ -203,10 +254,9 @@ const Page = () => {
 
     try {
       setSpinner("spinner", "Connecting to Database...");
-      await saveDailyEntry(userDTO.uid, recording, structuredResults);
+      await saveDailyEntry(userDTO.uid, transcript, structuredResults);
 
       // Reset all States
-      setRecording([]);
       setDailyRecording([]);
       setStructuredResults([]);
       setUserEntries([]);
@@ -221,6 +271,16 @@ const Page = () => {
       toast("Uppps, something went wrong.");
       setSpinner("record", "");
     }
+  };
+
+  const handleDelete = async () => {
+    if (isListening && recognition) {
+      recognition.stop();
+      setIsListening(false);
+    }
+
+    await getUserEntries();
+    setTranscript("");
   };
 
   const deleteUserEntry = async (date: string) => {
@@ -264,12 +324,13 @@ const Page = () => {
           <Record
             sendToLLM={sendToLLM}
             saveEntryInDB={saveEntryInDB}
-            isRecording={isRecording}
-            recording={recording}
+            isListening={isListening}
+            transcript={transcript}
             aiResults={structuredResults}
             isSaved={isSaved}
             screen={recordScreen}
             isAuthenticated={isAuthenticated}
+            handleDelete={handleDelete}
           />
         );
       case "calendar":
@@ -289,12 +350,17 @@ const Page = () => {
             handleLogout={handleLogout}
             deleteAllEntries={deleteAllEntries}
             userEntries={userEntries}
+            handleLanguageChange={handleLanguageChange}
+            language={language}
+            subscription={subscription}
           />
         );
       case "spinner":
         return <SpinnerScreen message={spinnerMessage} />;
       case "notLoggedIn":
         return <NotLoggedIn switchScreen={switchScreen} />;
+      case "myTest":
+        return <MyTest />;
       default:
         return <div>Screen not found</div>;
     }
@@ -306,7 +372,7 @@ const Page = () => {
       <main className="flex-grow overflow-auto">{renderContent()}</main>
       <Footer
         onMicClick={onMicClick}
-        isRecording={isRecording}
+        isRecording={isListening}
         switchScreen={switchScreen}
       />
       <ToastContainer
